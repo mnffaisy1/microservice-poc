@@ -58,10 +58,6 @@ export class UserRepository implements IUserRepository {
       user.password = hashIt(user.password);
       const userToSave = this.userDataSource.create(user);
       const res = await this.userDataSource.save(userToSave);
-      console.log(
-        "🚀 ~ file: index.ts ~ line 66 ~ UserRepository ~ signUp ~ res",
-        res
-      );
 
       return User.create({ ...res, id: res.id.toString() });
     } catch (err) {
@@ -115,11 +111,7 @@ export class UserRepository implements IUserRepository {
       const user = await this.userDataSource.findOneBy({
         _id: getObjectId(id)
       });
-      console.log(
-        "🚀 ~ file: index.ts ~ line 119 ~ UserRepository ~ getById ~ user",
-        user
-      );
-
+      
       if (!user) {
         throw new CustomError({
           message: "Invalid id",

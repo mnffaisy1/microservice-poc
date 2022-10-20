@@ -4,7 +4,7 @@ import { AppSettings } from "../../settings/app.settings";
 import { User } from "./models/User.model";
 
 @injectable()
-export class AppDataSource {
+export class DataSourceApp {
   private appDataSource: DataSource;
 
   constructor() {
@@ -21,12 +21,14 @@ export class AppDataSource {
 
   public instance(): DataSource {
     if (!this.appDataSource) {
-      new AppDataSource();
+      new DataSourceApp();
     }
     return this.appDataSource;
   }
 }
 
+// for cli
+export const AppDataSource: DataSource = new DataSourceApp().instance();
 export interface IAppDataSource {
   instance(): DataSource;
 }
