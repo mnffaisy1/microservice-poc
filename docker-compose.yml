@@ -1,0 +1,29 @@
+version: '3'
+services:
+  mongo_db:
+    container_name: db-container-microservice_poc
+    image: mongo:latest
+    restart: always
+    expose:
+      - "27017"
+    volumes:
+      - mongo_db:/data/db
+    ports:
+      - "27017:27017"
+  user_app:
+    image: user-app-image
+    container_name: user_service
+    restart: always
+    build: ./user_service
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGODB_URI=mongodb://mongo_db:27017
+      - DB_NAME=microservice_poc
+    links:
+      - mongo_db
+    depends_on:
+      - mongo_db
+
+volumes:
+  mongo_db: {}

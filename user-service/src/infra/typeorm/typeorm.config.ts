@@ -1,0 +1,31 @@
+import { injectable } from "inversify";
+import { DataSource } from "typeorm";
+import { AppSettings } from "../../settings/app.settings";
+import { User } from "./models/User.model";
+
+@injectable()
+export class AppDataSource {
+  private appDataSource: DataSource;
+
+  constructor() {
+    this.appDataSource = new DataSource({
+      type: "mongodb",
+      host: AppSettings.DB_HOST,
+      port: Number(AppSettings.DB_PORT),
+      database: AppSettings.DB_DATABASE,
+      entities: [User],
+      synchronize: true
+    });
+  }
+
+  public instance(): DataSource {
+    if (!this.appDataSource) {
+      new AppDataSource();
+    }
+    return this.appDataSource;
+  }
+}
+
+export interface IAppDataSource {
+  instance(): DataSource;
+}
