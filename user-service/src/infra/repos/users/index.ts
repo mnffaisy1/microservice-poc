@@ -30,20 +30,15 @@ export class UserRepository implements IUserRepository {
   }
 
   async getAll(): Promise<User[]> {
-    // throw new Error("Method not implemented.");
     try {
       const res = await this.userDataSource.find();
-      console.log(
-        "🚀 ~ file: index.ts ~ line 36 ~ UserRepository ~ getAll ~ res",
-        res
-      );
-      let users: User[];
+      const users: User[] = [];
       res.forEach((element) => {
         users.push(User.create({ ...element, id: element.id.toString() }));
       });
       return users;
     } catch (err) {
-      this.logger.error(`<Error> UserRepositoryGet - ${err}`);
+      this.logger.error(`<Error> UserRepositoryGetAll - ${err}`);
       throw err;
     }
   }
@@ -133,7 +128,7 @@ export class UserRepository implements IUserRepository {
         });
       }
 
-      return User.create({ ...user, id: "" });
+      return User.create({ ...user, id: user.id.toString() });
     } catch (err) {
       this.logger.error(`<Error> UserRepositoryGet - ${err}`);
 

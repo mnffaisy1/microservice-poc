@@ -27,7 +27,7 @@ export class UserController extends BaseController {
   ) {
     try {
       const users = await this.userRepository.getAll();
-      this.createResponse(res, Result.ok(users, "Get allUsers successfully"));
+      this.createResponse(res, Result.ok(users, "Get all Users successfully"));
     } catch (err) {
       this.logger.error(`<Error> Controller /users - ${err}`);
       const errMsg = err.status && err.status !== 500 ? err.message : "";

@@ -14,7 +14,8 @@ export class AppDataSource {
       port: Number(AppSettings.DB_PORT),
       database: AppSettings.DB_DATABASE,
       entities: [User],
-      synchronize: true
+      synchronize: true,
+      useUnifiedTopology: true
     });
   }
 
