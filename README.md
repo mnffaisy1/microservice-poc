@@ -1,5 +1,7 @@
 # Simple user-servive
 
+> This project uses Node 18.
+
 Steps to run this project:
 1. cd into `user-service`
 2. Make sure Mongodb is up and running
