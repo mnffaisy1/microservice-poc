@@ -28,14 +28,14 @@ export class User {
   savedPosts: string[];
 
   @CreateDateColumn({
-    name: "created_at",
+    name: "createdAt",
     type: "timestamp",
     default: () => "CURRENT_TIMESTAMP(6)"
   })
   createdAt: Date;
 
   @UpdateDateColumn({
-    name: "updated_at",
+    name: "updatedAt",
     type: "timestamp",
     default: () => "CURRENT_TIMESTAMP(6)",
     onUpdate: "CURRENT_TIMESTAMP(6)"
