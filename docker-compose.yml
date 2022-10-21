@@ -18,8 +18,10 @@ services:
       - "3000:3000"
     links:
       - mongo_db
+      - post_app
     depends_on:
       - mongo_db
+      - post_app
   
   post_app:
     container_name: post_service
