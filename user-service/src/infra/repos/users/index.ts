@@ -74,6 +74,7 @@ export class UserRepository implements IUserRepository {
         existingUser.savedPosts = [];
       }
       existingUser.savedPosts.push(postId);
+      existingUser.savedPosts = [...new Set(existingUser.savedPosts)];
       existingUser = this.userDataSource.create({ ...existingUser });
       await this.userDataSource.findOneAndUpdate(
         {
