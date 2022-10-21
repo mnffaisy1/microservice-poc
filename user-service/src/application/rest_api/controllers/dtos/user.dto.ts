@@ -52,3 +52,10 @@ export class UserUpdateDTO extends UserDTO {
   @IsMongoId({ message: "Invalid id" })
   public id: string;
 }
+
+export class SavePostDTO {
+  @Expose()
+  @MinLength(1)
+  @IsMongoId({ message: "Invalid Post id" })
+  public postId: string;
+}

@@ -15,16 +15,14 @@ import { Result } from "../../../domain/utilities/result";
 import { validationMiddleware } from "../../../infra/middleware/validator.middleware";
 import { TYPES } from "../../constants/types";
 import { BaseController } from "../base/base.controller";
-import { UserSignUpDTO, UserUpdateDTO } from "./dtos/user.dto";
+import { SavePostDTO, UserSignUpDTO, UserUpdateDTO } from "./dtos/user.dto";
 
 @controller("/users")
 export class UserController extends BaseController {
   @inject(TYPES.UserRepository) userRepository: IUserRepository;
 
   @httpGet("/")
-  private async getAll(
-    @response() res: Response
-  ) {
+  private async getAll(@response() res: Response) {
     try {
       const users = await this.userRepository.getAll();
       this.createResponse(res, Result.ok(users, "Get all Users successfully"));
@@ -34,8 +32,6 @@ export class UserController extends BaseController {
       this.createResponse(res, Result.fail(errMsg, err.errorCode));
     }
   }
-
-
 
   @httpPost("/sign-up", validationMiddleware(UserSignUpDTO))
   private async signUp(
@@ -47,6 +43,26 @@ export class UserController extends BaseController {
       this.createResponse(res, Result.ok(user, "User signed up successfully"));
     } catch (err) {
       this.logger.error(`<Error> Controller SignUp - ${err}`);
+      const errMsg = err.status && err.status !== 500 ? err.message : "";
+      this.createResponse(res, Result.fail(errMsg, err.errorCode));
+    }
+  }
+
+  @httpPost("/save-post/:id", validationMiddleware(SavePostDTO))
+  private async savePost(
+    @requestParam("id") id: string,
+    @requestBody() body: SavePostDTO,
+    @response() res: Response
+  ) {
+    if (!id || !isMongoId(id)) {
+      this.createResponse(res, Result.fail("Invalid id", "INVALID_REQUEST"));
+      return;
+    }
+    try {
+      const user = await this.userRepository.savePost(id, body.postId);
+      this.createResponse(res, Result.ok(user, "Post saved successfully"));
+    } catch (err) {
+      this.logger.error(`<Error> Controller savePost - ${err}`);
       const errMsg = err.status && err.status !== 500 ? err.message : "";
       this.createResponse(res, Result.fail(errMsg, err.errorCode));
     }

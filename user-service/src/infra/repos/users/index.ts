@@ -13,6 +13,8 @@ import { TYPES } from "../../../application/constants/types";
 import { CustomError } from "../../errors/base.error";
 import { IAppDataSource } from "../../typeorm/typeorm.config";
 import { getObjectId } from "../../typeorm/utils";
+import axios from "axios";
+import { AppSettings } from "../../../settings/app.settings";
 
 @injectable()
 export class UserRepository implements IUserRepository {
@@ -39,6 +41,50 @@ export class UserRepository implements IUserRepository {
       return users;
     } catch (err) {
       this.logger.error(`<Error> UserRepositoryGetAll - ${err}`);
+      throw err;
+    }
+  }
+
+  async savePost(id: string, postId: string): Promise<User> {
+    try {
+      try {
+        await axios({
+          method: "get",
+          url: `${AppSettings.POST_SERVICE_URL}/api/v1/posts/${postId}`
+        });
+      } catch (error) {
+        throw new CustomError({
+          message: "Invalid postId",
+          status: error.status,
+          errorCode: error.response.data.errorCode
+        });
+      }
+
+      let existingUser = await this.userDataSource.findOneBy({
+        _id: getObjectId(id)
+      });
+      if (!existingUser) {
+        throw new CustomError({
+          message: "Invalid user id",
+          status: 400,
+          errorCode: "INVALID_REQUEST"
+        });
+      }
+      if (!existingUser.savedPosts) {
+        existingUser.savedPosts = [];
+      }
+      existingUser.savedPosts.push(postId);
+      existingUser = this.userDataSource.create({ ...existingUser });
+      await this.userDataSource.findOneAndUpdate(
+        {
+          _id: existingUser.id
+        },
+        { $set: existingUser }
+      );
+
+      return User.create({ ...existingUser, id: existingUser.id.toString() });
+    } catch (err) {
+      this.logger.error(`<Error> UserRepositorsavePost - ${err}`);
       throw err;
     }
   }
@@ -111,7 +157,7 @@ export class UserRepository implements IUserRepository {
       const user = await this.userDataSource.findOneBy({
         _id: getObjectId(id)
       });
-      
+
       if (!user) {
         throw new CustomError({
           message: "Invalid id",
