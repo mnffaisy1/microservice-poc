@@ -20,6 +20,17 @@ services:
       - mongo_db
     depends_on:
       - mongo_db
+  
+  post_app:
+    container_name: post_service
+    restart: always
+    build: ./post-service
+    ports:
+      - "3001:3001"
+    links:
+      - mongo_db
+    depends_on:
+      - mongo_db
 
 volumes:
   mongo_db: {}
