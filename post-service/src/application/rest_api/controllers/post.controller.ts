@@ -10,7 +10,7 @@ import {
   requestParam,
   response
 } from "inversify-express-utils";
-import { IPostRepository } from "../../../domain/users/post.repo";
+import { IPostRepository } from "../../../domain/post/post.repo";
 import { Result } from "../../../domain/utilities/result";
 import { validationMiddleware } from "../../../infra/middleware/validator.middleware";
 import { TYPES } from "../../constants/types";

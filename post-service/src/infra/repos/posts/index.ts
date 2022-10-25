@@ -1,8 +1,8 @@
 import { inject, injectable } from "inversify";
 import { MongoRepository } from "typeorm";
 import { Post as PostModel } from "../../typeorm/models/Post.model";
-import { Post } from "../../../domain/users/post";
-import { IPostRepository } from "../../../domain/users/post.repo";
+import { Post } from "../../../domain/post/post";
+import { IPostRepository } from "../../../domain/post/post.repo";
 
 import { Logger, ILogger } from "../../logging/pino";
 import { TYPES } from "../../../application/constants/types";
