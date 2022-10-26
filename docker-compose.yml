@@ -49,6 +49,7 @@ services:
       - post_app
     depends_on:
       - mongo_db
+      - kafka
       - post_app
 
   post_app:
@@ -60,6 +61,7 @@ services:
     links:
       - mongo_db
     depends_on:
+      - kafka
       - mongo_db
 
 volumes:
