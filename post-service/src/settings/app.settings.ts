@@ -9,5 +9,6 @@ export class AppSettings {
   public static readonly DB_PORT = process.env.DB_PORT;
   public static readonly DB_PASSWORD = process.env.DB_PASSWORD;
   public static readonly DB_DATABASE = process.env.DB_DATABASE;
+  public static readonly KAFKA_BROKER = process.env.KAFKA_BROKER;
 
 }

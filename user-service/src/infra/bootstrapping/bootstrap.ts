@@ -12,6 +12,10 @@ import { Logger } from "../logging/pino";
 import "../../application/rest_api/controllers/index.controller";
 import "../../application/rest_api/controllers/user.controller";
 import { IAppDataSource } from "../typeorm/typeorm.config";
+import { DomainConsumerMessagingRepositoryKafka } from "../messaging/kafka/consumer";
+import { KafkaConfiguration } from "../messaging/kafka/configuration";
+import postConsumer from "../../application/consumers/post.consumer";
+import { AppSettings } from "../../settings/app.settings";
 
 export async function bootstrap(
   container: Container,
@@ -49,6 +53,16 @@ export async function bootstrap(
       await appDataSource.initialize();
 
       logger.info("Initialized database");
+
+      const consumer = new DomainConsumerMessagingRepositoryKafka(
+        KafkaConfiguration.getKafkaConfiguration({
+          KAFKA_BROKERS: [AppSettings.KAFKA_BROKER],
+          KAFKA_CONNECTION_TIMEOUT: 5000,
+          KAFKA_CERTIFICATE_BASE64: "122"
+        })
+      );
+
+      consumer.subscribe(postConsumer);
 
       const app = server.build();
       app.listen(port, () => {

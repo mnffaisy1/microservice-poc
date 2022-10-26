@@ -9,20 +9,25 @@ import { TYPES } from "../../../application/constants/types";
 import { CustomError } from "../../errors/base.error";
 import { IAppDataSource } from "../../typeorm/typeorm.config";
 import { getObjectId } from "../../typeorm/utils";
+import { IDomainProducerMessagingRepository } from "../../../domain/ports/messaging/producer";
 
 @injectable()
 export class PostRepository implements IPostRepository {
   protected logger: ILogger;
   protected postDataSource: MongoRepository<PostModel>;
+  protected producer: IDomainProducerMessagingRepository;
 
   constructor(
     @inject(TYPES.Logger) logger: Logger,
-    @inject(TYPES.DataSource) appDataSource: IAppDataSource
+    @inject(TYPES.DataSource) appDataSource: IAppDataSource,
+    @inject(TYPES.MessagingProducer) producer: () => IDomainProducerMessagingRepository
+
   ) {
     this.logger = logger.get();
     this.postDataSource = appDataSource
       .instance()
       .getMongoRepository(PostModel);
+    this.producer = producer();
   }
 
   async create(post: Post): Promise<Post> {

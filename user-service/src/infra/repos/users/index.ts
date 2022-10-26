@@ -15,20 +15,27 @@ import { IAppDataSource } from "../../typeorm/typeorm.config";
 import { getObjectId } from "../../typeorm/utils";
 import axios from "axios";
 import { AppSettings } from "../../../settings/app.settings";
+import { IDomainProducerMessagingRepository } from "../../../domain/ports/messaging/producer";
+import { Topics, UserEvents } from "../../../application/constants/messaging.constants";
+import { v4 } from "uuid";
 
 @injectable()
 export class UserRepository implements IUserRepository {
   protected logger: ILogger;
   protected userDataSource: MongoRepository<UserModel>;
+  protected producer: IDomainProducerMessagingRepository;
 
   constructor(
     @inject(TYPES.Logger) logger: Logger,
-    @inject(TYPES.DataSource) appDataSource: IAppDataSource
+    @inject(TYPES.DataSource) appDataSource: IAppDataSource,
+    @inject(TYPES.MessagingProducer) producer: () => IDomainProducerMessagingRepository
+
   ) {
     this.logger = logger.get();
     this.userDataSource = appDataSource
       .instance()
       .getMongoRepository(UserModel);
+    this.producer = producer();
   }
 
   async getAll(): Promise<User[]> {
@@ -105,7 +112,22 @@ export class UserRepository implements IUserRepository {
       user.password = hashIt(user.password);
       const userToSave = this.userDataSource.create(user);
       const res = await this.userDataSource.save(userToSave);
-
+      this.producer.publish(
+        Topics.UserService,
+        {
+          // partition: 0,
+          dateTimeOccurred: new Date(),
+          eventId: v4(),
+          data: { ...user, id: userToSave.id },
+          value: { ...user, id: userToSave.id },
+          eventSource: Topics.UserService,
+          eventType: UserEvents.Signup
+        },
+        {
+          noAvroEncoding: true,
+          nonTransactional: true
+        }
+      );
       return User.create({ ...res, id: res.id.toString() });
     } catch (err) {
       this.logger.error(`<Error> UserRepositorySignUp - ${err}`);
