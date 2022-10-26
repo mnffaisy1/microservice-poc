@@ -12,4 +12,5 @@ export interface IUserRepository {
   signIn(signInInfo: IUserSignInProps): Promise<IUserWithTokenProps>;
   update(user: IUserProps): Promise<User>;
   savePost(id: string, postid: string): Promise<User>;
+  getBySavedPosts(postId: string): Promise<User[]>;
 }

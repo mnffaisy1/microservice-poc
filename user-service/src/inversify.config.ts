@@ -7,11 +7,12 @@ import { DomainProducerMessagingRepositoryKafka } from "./infra/messaging/kafka/
 import { KafkaConfiguration } from "./infra/messaging/kafka/configuration";
 import { AppSettings } from "./settings/app.settings";
 import { IDomainProducerMessagingRepository } from "./domain/ports/messaging/producer";
+import { IUserRepository } from "./domain/users/user.repo";
 
 const container = new Container();
 
 container.bind(TYPES.Logger).to(Logger).inSingletonScope();
-container.bind(TYPES.UserRepository).to(UserRepository);
+container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container
   .bind<IAppDataSource>(TYPES.DataSource)
   .to(DataSourceApp)

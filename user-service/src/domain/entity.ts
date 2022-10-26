@@ -6,7 +6,7 @@ const isEntity = <T>(v: Entity<T>): v is Entity<T> => {
 
 export abstract class Entity<T> {
   protected readonly _id: string;
-  protected props: T;
+  public props: T;
 
   constructor(props: T, id?: string) {
     this._id = id ? id : UniqueEntityID();

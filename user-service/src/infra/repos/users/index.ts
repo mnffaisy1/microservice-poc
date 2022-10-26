@@ -16,7 +16,10 @@ import { getObjectId } from "../../typeorm/utils";
 import axios from "axios";
 import { AppSettings } from "../../../settings/app.settings";
 import { IDomainProducerMessagingRepository } from "../../../domain/ports/messaging/producer";
-import { Topics, UserEvents } from "../../../application/constants/messaging.constants";
+import {
+  Topics,
+  UserEvents
+} from "../../../application/constants/messaging.constants";
 import { v4 } from "uuid";
 
 @injectable()
@@ -28,8 +31,8 @@ export class UserRepository implements IUserRepository {
   constructor(
     @inject(TYPES.Logger) logger: Logger,
     @inject(TYPES.DataSource) appDataSource: IAppDataSource,
-    @inject(TYPES.MessagingProducer) producer: () => IDomainProducerMessagingRepository
-
+    @inject(TYPES.MessagingProducer)
+    producer: () => IDomainProducerMessagingRepository
   ) {
     this.logger = logger.get();
     this.userDataSource = appDataSource
@@ -159,6 +162,8 @@ export class UserRepository implements IUserRepository {
       if (user.password) {
         user.password = hashIt(user.password);
       }
+      
+      
       existingUser = this.userDataSource.create({ ...existingUser, ...user });
       await this.userDataSource.findOneAndUpdate(
         {
@@ -190,6 +195,26 @@ export class UserRepository implements IUserRepository {
       }
 
       return User.create({ ...user, id: user.id.toString() });
+    } catch (err) {
+      this.logger.error(`<Error> UserRepositoryGet - ${err}`);
+
+      throw err;
+    }
+  }
+
+  async getBySavedPosts(postId: string): Promise<User[]> {
+    try {
+      
+
+      const savedPosts = await this.userDataSource.findBy({
+        savedPosts: postId
+      });
+
+      const users: User[] = [];
+      savedPosts.forEach((element) => {
+        users.push(User.create({ ...element, id: element.id.toString() }));
+      });
+      return users;
     } catch (err) {
       this.logger.error(`<Error> UserRepositoryGet - ${err}`);
 
