@@ -34,7 +34,7 @@ export class DomainConsumerMessagingRepositoryKafka implements IDomainConsumerMe
     const groupId =
       consumerOptions?.groupId ||
       this._kafkaConfiguration.KAFKA_CONSUMER_GROUP_ID ||
-      "postGuid";
+      "userGuid";
 
     this._consumer = this._kafkaClient.consumer({
       groupId,

@@ -3,6 +3,7 @@ import { Response } from "express";
 import { inject } from "inversify";
 import {
   controller,
+  httpDelete,
   httpGet,
   httpPost,
   httpPut,
@@ -26,8 +27,8 @@ export class UserController extends BaseController {
     @response() res: Response
   ) {
     try {
-      const users = await this.postRepository.getAll();
-      this.createResponse(res, Result.ok(users, "Get all Posts successfully"));
+      const posts = await this.postRepository.getAll();
+      this.createResponse(res, Result.ok(posts, "Get all Posts successfully"));
     } catch (err) {
       this.logger.error(`<Error> Controller /posts - ${err}`);
       const errMsg = err.status && err.status !== 500 ? err.message : "";
@@ -43,8 +44,8 @@ export class UserController extends BaseController {
     @response() res: Response
   ) {
     try {
-      const user = await this.postRepository.create(body);
-      this.createResponse(res, Result.ok(user, "Post created successfully"));
+      const post = await this.postRepository.create(body);
+      this.createResponse(res, Result.ok(post, "Post created successfully"));
     } catch (err) {
       this.logger.error(`<Error> Controller Create Posts - ${err}`);
       const errMsg = err.status && err.status !== 500 ? err.message : "";
@@ -58,8 +59,8 @@ export class UserController extends BaseController {
     @response() res: Response
   ) {
     try {
-      const user = await this.postRepository.update(body);
-      this.createResponse(res, Result.ok(user, "Post updated successfully"));
+      const post = await this.postRepository.update(body);
+      this.createResponse(res, Result.ok(post, "Post updated successfully"));
     } catch (err) {
       this.logger.error(`<Error> Controller update - ${err}`);
       const errMsg = err.status && err.status !== 500 ? err.message : "";
@@ -74,8 +75,24 @@ export class UserController extends BaseController {
       return;
     }
     try {
-      const user = await this.postRepository.getById(id);
-      this.createResponse(res, Result.ok(user, "Post retrieved successfully"));
+      const post = await this.postRepository.getById(id);
+      this.createResponse(res, Result.ok(post, "Post retrieved successfully"));
+    } catch (err) {
+      this.logger.error(`<Error> Controller Get - ${err}`);
+      const errMsg = err.status && err.status !== 500 ? err.message : "";
+      this.createResponse(res, Result.fail(errMsg, err.errorCode));
+    }
+  }
+
+  @httpDelete("/:id")
+  private async delete(@requestParam("id") id: string, @response() res: Response) {
+    if (!id || !isMongoId(id)) {
+      this.createResponse(res, Result.fail("Invalid id", "INVALID_REQUEST"));
+      return;
+    }
+    try {
+      const post = await this.postRepository.deleteById(id);
+      this.createResponse(res, Result.ok(post, "Post Deleted successfully"));
     } catch (err) {
       this.logger.error(`<Error> Controller Get - ${err}`);
       const errMsg = err.status && err.status !== 500 ? err.message : "";

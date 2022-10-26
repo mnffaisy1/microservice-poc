@@ -13,5 +13,6 @@ export enum UserEvents {
 
 export enum PostEvents {
   Created = "created",
-  Updated = "updated"
+  Updated = "updated",
+  Deleted = "deleted"
 }

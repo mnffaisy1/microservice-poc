@@ -1,8 +1,14 @@
+import { inject, injectable } from "inversify";
 import { SubscriptionParameters } from "../../domain/ports/messaging/consumer";
+import { IUserRepository } from "../../domain/users/user.repo";
 import { PostEvents, Topics } from "../constants/messaging.constants";
+import { TYPES } from "../constants/types";
 
+@injectable()
 class PostConsumer {
-  onPostCreated(): SubscriptionParameters {
+  @inject(TYPES.UserRepository) userRepository: IUserRepository;
+
+  public onPostCreated(): SubscriptionParameters {
     return {
       topic: Topics.PostService,
       eventTypes: [PostEvents.Created],
@@ -18,7 +24,7 @@ class PostConsumer {
     };
   }
 
-  onPostUpdated(): SubscriptionParameters {
+  public onPostUpdated(): SubscriptionParameters {
     return {
       topic: Topics.PostService,
       eventTypes: [PostEvents.Updated],
@@ -33,7 +39,30 @@ class PostConsumer {
       }
     };
   }
+
+  public onPostDeleted(): SubscriptionParameters {
+    return {
+      topic: Topics.PostService,
+      eventTypes: [PostEvents.Deleted],
+      readFromBeginning: true,
+      handles: {
+        async handle(event) {
+          console.log(
+            `Consumed Post Delete Event ${JSON.stringify(event)}`
+          );
+          return {
+            handled: true
+          };
+        }
+      }
+    };
+  }
 }
 
 const postConsumer = new PostConsumer();
-export default [postConsumer.onPostCreated(), postConsumer.onPostUpdated()];
+
+export default [
+  postConsumer.onPostCreated(),
+  postConsumer.onPostUpdated(),
+  postConsumer.onPostDeleted()
+];
