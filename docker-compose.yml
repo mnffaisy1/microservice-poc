@@ -41,7 +41,7 @@ services:
   user_app:
     container_name: user_service
     restart: always
-    build: ./user-service
+    build: ./packages/user-service
     ports:
       - "3000:3000"
     links:
@@ -55,7 +55,7 @@ services:
   post_app:
     container_name: post_service
     restart: always
-    build: ./post-service
+    build: ./packages/post-service
     ports:
       - "3001:3001"
     links:

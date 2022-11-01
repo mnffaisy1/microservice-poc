@@ -3,11 +3,12 @@
 > This project uses Node 18.
 
 Steps to run this project:
-1. cd into `user-service`
-2. Make sure Mongodb is up and running
-3. set the env vars 
-4. Run `npm i` command
-5. Run `npm run dev` command
+1. Clone this Repo
+2. `cd ${ROOT_FOLDER_OF_THIS_PROJECT}`
+3. Make sure Mongodb and Kafka is up and running
+4. set the env vars 
+5. Run `npm i` command
+6. Run `npm start` command
 
 Or run this service using docker-compose
 make sure `DB_HOST` env var points to `mongo_db` docker service name
