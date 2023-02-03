@@ -17,30 +17,30 @@ export class User extends Entity<IUserProps> {
   }
 
   get name(): string {
-    return this.name;
+    return this.props.name;
   }
 
   get email(): string {
-    return this.email;
+    return this.props.email;
   }
 
   set password(text: string) {
-    this.password = text;
+    this.props.password = text;
   }
 
   get password(): string {
-    return this.password;
+    return this.props.password;
   }
 
   get savedPosts(): string[] {
-    return this.savedPosts;
+    return this.props.savedPosts;
   }
 
   get createdAt(): Date {
-    return this.createdAt;
+    return this.props.createdAt;
   }
 
   get updatedAt(): Date {
-    return this.updatedAt;
+    return this.props.updatedAt;
   }
 }
