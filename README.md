@@ -1,4 +1,4 @@
-# Simple user-servive
+# Simple user-service
 
 > This project uses Node 18.
 
