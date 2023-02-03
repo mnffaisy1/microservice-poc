@@ -17,22 +17,22 @@ export class Post extends Entity<IPostProps> {
   }
 
   get author(): string {
-    return this.author;
+    return this.props.author;
   }
 
   get title(): string {
-    return this.title;
+    return this.props.title;
   }
 
   get body(): string {
-    return this.body;
+    return this.props.body;
   }
 
   get createdAt(): Date {
-    return this.createdAt;
+    return this.props.createdAt;
   }
 
   get updatedAt(): Date {
-    return this.updatedAt;
+    return this.props.updatedAt;
   }
 }
