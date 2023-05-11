@@ -28,6 +28,20 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - "zookeeper"
+
+  #schema
+  schema-registry:
+    image: confluentinc/cp-schema-registry:latest
+    depends_on:
+      - zookeeper
+      - kafka
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: "zookeeper:2181"
+  
+  #mongodb
   mongo_db:
     container_name: db-container
     image: mongo:latest
@@ -38,6 +52,8 @@ services:
       - mongo_db:/data/db
     ports:
       - "27017:27017"
+  
+  #user
   user_app:
     container_name: user_service
     restart: always
@@ -52,6 +68,7 @@ services:
       - kafka
       - post_app
 
+  #post
   post_app:
     container_name: post_service
     restart: always
